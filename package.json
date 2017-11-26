@@ -12,7 +12,7 @@
   "bin": {
     "protoc-ts": "bin/protoc-ts"
   },
-  "repository": "https://github.com/improbable-eng/ts-protoc-gen",
+  "repository": "https://github.com/mean-expert-official/protoc-ts",
   "keywords": [
     "protobuf",
     "protoc",
