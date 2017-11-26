@@ -10,7 +10,7 @@
     "test": "npm run lint && npm run build && (cd test && npm run test)"
   },
   "bin": {
-    "protoc-ts": "bin/protoc-ts"
+    "protoc-gen-ts": "bin/protoc-gen-ts"
   },
   "repository": "https://github.com/mean-expert-official/protoc-ts",
   "keywords": [

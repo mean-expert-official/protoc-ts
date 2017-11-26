@@ -1,13 +1,13 @@
-import {filePathToPseudoNamespace, getPathToRoot, lowercaseFirst} from "../util";
-import {ExportMap} from "../ExportMap";
-import {Printer} from "../Printer";
-import {FileDescriptorProto} from "google-protobuf/google/protobuf/descriptor_pb";
-import {WellKnownTypesMap} from "../WellKnown";
-import {getFieldType, MESSAGE_TYPE} from "./FieldTypes";
-import {printMessage} from "./message";
-import {printEnum} from "./enum";
-import {printExtension} from "./extensions";
-import {printDocumentation} from "./documentation";
+import { filePathToPseudoNamespace, getPathToRoot, lowercaseFirst } from "../util";
+import { ExportMap } from "../ExportMap";
+import { Printer } from "../Printer";
+import { FileDescriptorProto } from "google-protobuf/google/protobuf/descriptor_pb";
+import { WellKnownTypesMap } from "../WellKnown";
+import { getFieldType, MESSAGE_TYPE } from "./FieldTypes";
+import { printMessage } from "./message";
+import { printEnum } from "./enum";
+import { printExtension } from "./extensions";
+import { printDocumentation } from "./documentation";
 
 export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProto, exportMap: ExportMap) {
   if (fileDescriptor.getServiceList().length === 0) {
@@ -74,26 +74,46 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
     fileDescriptor.getEnumTypeList().forEach(enumType => {
       printer.print(printEnum(service, enumType, 1));
     });
-    printer.printLn(`}`);
-
-/* TODO: Migrate to helper
-    printer.printLn(`export namespace ${service.getName()}Config {`);
-    const classPrinter = new Printer(2);
+    // Service Config
+    printer.print(printDocumentation('namespace', `Config`, 1, `Config namespace that provides configurations
+    * for methods from the given gRPC ${service.getName()} Service.`));
+    printer.printIndentedLn(`export namespace Config {`);
+    const configPrinter = new Printer(2);
     service.getMethodList().forEach(method => {
-      // const requestMessageTypeName = getFieldType(MESSAGE_TYPE, method.getInputType().slice(1), "", exportMap);
-      //const responseMessageTypeName = getFieldType(MESSAGE_TYPE, method.getOutputType().slice(1), "", exportMap);
-      classPrinter.printLn(`export class ${method.getName()} {`);
-      classPrinter.printIndentedLn(`static readonly methodName: string = '${method.getName()}';`);
-      classPrinter.printIndentedLn(`static readonly service: string = '${service.getName()};'`);
-      classPrinter.printIndentedLn(`static readonly requestStream: boolean = ${method.getClientStreaming()};`);
-      classPrinter.printIndentedLn(`static readonly responseStream: boolean = ${method.getServerStreaming()};`);
-      //classPrinter.printIndentedLn(`static readonly requestType = ${requestMessageTypeName};`);
-      //classPrinter.printIndentedLn(`static readonly responseType = ${responseMessageTypeName};`);
-      classPrinter.printLn(`}`);
+
+      configPrinter.printLn(`export namespace ${method.getName()} {`);
+      configPrinter.printIndentedLn(`export const PROTO_NAME: string = '${fileDescriptor.getName()}';`);
+      configPrinter.printIndentedLn(`export const PROTO_PACKAGE: string = '${fileDescriptor.getPackage()}';`);
+      configPrinter.printIndentedLn(`export const SERVICE_NAME: string = '${service.getName()}';`);
+      configPrinter.printIndentedLn(`export const METHOD_NAME: string = '${method.getName()}';`);
+      configPrinter.printIndentedLn(`export const REQUEST_STREAM: boolean = ${method.getClientStreaming()};`);
+      configPrinter.printIndentedLn(`export const RESPONSE_STREAM: boolean = ${method.getServerStreaming()};`);
+      configPrinter.printLn(`}`);
+      //configPrinter.printIndentedLn(`static readonly requestType = ${requestMessageTypeName};`);
+      //configPrinter.printIndentedLn(`static readonly responseType = ${responseMessageTypeName};`);
     });
-    printer.print(classPrinter.output);
+    printer.print(configPrinter.output);
+    printer.printIndentedLn(`}`);
+    /* TODO: Migrate to helper
+        printer.printLn(`export namespace ${service.getName()}Config {`);
+        const classPrinter = new Printer(2);
+        service.getMethodList().forEach(method => {
+          // const requestMessageTypeName = getFieldType(MESSAGE_TYPE, method.getInputType().slice(1), "", exportMap);
+          //const responseMessageTypeName = getFieldType(MESSAGE_TYPE, method.getOutputType().slice(1), "", exportMap);
+          classPrinter.printLn(`export class ${method.getName()} {`);
+          classPrinter.printIndentedLn(`static readonly methodName: string = '${method.getName()}';`);
+          classPrinter.printIndentedLn(`static readonly service: string = '${service.getName()};'`);
+          classPrinter.printIndentedLn(`static readonly requestStream: boolean = ${method.getClientStreaming()};`);
+          classPrinter.printIndentedLn(`static readonly responseStream: boolean = ${method.getServerStreaming()};`);
+          //classPrinter.printIndentedLn(`static readonly requestType = ${requestMessageTypeName};`);
+          //classPrinter.printIndentedLn(`static readonly responseType = ${responseMessageTypeName};`);
+          classPrinter.printLn(`}`);
+        });
+        printer.print(classPrinter.output);
+        printer.printLn(`}`);
+        */
+
     printer.printLn(`}`);
-    */
 
   });
 
