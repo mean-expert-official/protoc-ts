@@ -54,6 +54,8 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
     printer.printIndentedLn(`export interface Service {`);
     const methodPrinter = new Printer(1);
     service.getMethodList().forEach(method => {
+      methodPrinter.write(printDocumentation('method', `${service.getName()}.Service.${lowercaseFirst(method.getName())}`, 2, `${service.getName()} method declaration
+     * from the given gRPC ${service.getName()} service.`));
       const requestMessageTypeName = getFieldType(MESSAGE_TYPE, method.getInputType().slice(1), "", exportMap);
       const responseMessageTypeName = getFieldType(MESSAGE_TYPE, method.getOutputType().slice(1), "", exportMap);
       methodPrinter.printIndentedLn(`${lowercaseFirst(method.getName())}(request: ${requestMessageTypeName}): ${responseMessageTypeName};`);
@@ -62,25 +64,11 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
     printer.printIndentedLn(`}`);
     // End of Service
     //printer.printEmptyLn();
-    // Service Messages
-    fileDescriptor.getMessageTypeList().forEach(enumType => {
-      printer.print(printMessage(service, fileName, exportMap, enumType, 1, fileDescriptor));
-    });
-    // Service Extensions
-    fileDescriptor.getExtensionList().forEach(extension => {
-      printer.print(printExtension(fileName, exportMap, extension, 1));
-    });
-    // Service Enums
-    fileDescriptor.getEnumTypeList().forEach(enumType => {
-      printer.print(printEnum(service, enumType, 1));
-    });
     // Service Config
-    printer.print(printDocumentation('namespace', `Config`, 1, `Config namespace that provides configurations
-    * for methods from the given gRPC ${service.getName()} Service.`));
-    printer.printIndentedLn(`export namespace Config {`);
-    const configPrinter = new Printer(2);
+    const configPrinter = new Printer(1);
     service.getMethodList().forEach(method => {
-
+      configPrinter.write(printDocumentation('namespace', `${service.getName()}.${method.getName()}`, 1, `${service.getName()} method configuration
+   * from the given gRPC ${service.getName()} service.`));
       configPrinter.printLn(`export namespace ${method.getName()} {`);
       configPrinter.printIndentedLn(`export const PROTO_NAME: string = '${fileDescriptor.getName()}';`);
       configPrinter.printIndentedLn(`export const PROTO_PACKAGE: string = '${fileDescriptor.getPackage()}';`);
@@ -89,32 +77,23 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
       configPrinter.printIndentedLn(`export const REQUEST_STREAM: boolean = ${method.getClientStreaming()};`);
       configPrinter.printIndentedLn(`export const RESPONSE_STREAM: boolean = ${method.getServerStreaming()};`);
       configPrinter.printLn(`}`);
-      //configPrinter.printIndentedLn(`static readonly requestType = ${requestMessageTypeName};`);
+      //configPrinter.printIndentedLn(`static readonlt5r, y requestType = ${requestMessageTypeName};`);
       //configPrinter.printIndentedLn(`static readonly responseType = ${responseMessageTypeName};`);
     });
     printer.print(configPrinter.output);
-    printer.printIndentedLn(`}`);
-    /* TODO: Migrate to helper
-        printer.printLn(`export namespace ${service.getName()}Config {`);
-        const classPrinter = new Printer(2);
-        service.getMethodList().forEach(method => {
-          // const requestMessageTypeName = getFieldType(MESSAGE_TYPE, method.getInputType().slice(1), "", exportMap);
-          //const responseMessageTypeName = getFieldType(MESSAGE_TYPE, method.getOutputType().slice(1), "", exportMap);
-          classPrinter.printLn(`export class ${method.getName()} {`);
-          classPrinter.printIndentedLn(`static readonly methodName: string = '${method.getName()}';`);
-          classPrinter.printIndentedLn(`static readonly service: string = '${service.getName()};'`);
-          classPrinter.printIndentedLn(`static readonly requestStream: boolean = ${method.getClientStreaming()};`);
-          classPrinter.printIndentedLn(`static readonly responseStream: boolean = ${method.getServerStreaming()};`);
-          //classPrinter.printIndentedLn(`static readonly requestType = ${requestMessageTypeName};`);
-          //classPrinter.printIndentedLn(`static readonly responseType = ${responseMessageTypeName};`);
-          classPrinter.printLn(`}`);
-        });
-        printer.print(classPrinter.output);
-        printer.printLn(`}`);
-        */
-
     printer.printLn(`}`);
-
+    // Service Messages
+    fileDescriptor.getMessageTypeList().forEach(enumType => {
+      printer.print(printMessage(fileName, exportMap, enumType, 0, fileDescriptor));
+    });
+    // Service Extensions
+    fileDescriptor.getExtensionList().forEach(extension => {
+      printer.print(printExtension(fileName, exportMap, extension, 0));
+    });
+    // Service Enums
+    fileDescriptor.getEnumTypeList().forEach(enumType => {
+      printer.print(printEnum(enumType, 0));
+    });
   });
 
   return printer.getOutput();

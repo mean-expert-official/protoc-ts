@@ -1,6 +1,6 @@
 {
   "name": "@mean-expert/protoc-ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Protoc compiler plugin for TypeScript service interfaces",
   "scripts": {
     "lint": "tslint src/**/*.ts && (cd test && npm run lint)",

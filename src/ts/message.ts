@@ -2,7 +2,7 @@ import {
   snakeToCamel, uppercaseFirst, isProto2, withinNamespaceFromExportEntry, filePathToPseudoNamespace
 } from "../util";
 import {ExportMap} from "../ExportMap";
-import {FieldDescriptorProto, FileDescriptorProto, DescriptorProto, ServiceDescriptorProto} from "google-protobuf/google/protobuf/descriptor_pb";
+import {FieldDescriptorProto, FileDescriptorProto, DescriptorProto} from "google-protobuf/google/protobuf/descriptor_pb";
 import {MESSAGE_TYPE, BYTES_TYPE, getFieldType, getTypeName} from "./FieldTypes";
 import {Printer} from "../Printer";
 import {printEnum} from "./enum";
@@ -29,7 +29,7 @@ function hasFieldPresence(field: FieldDescriptorProto, fileDescriptor: FileDescr
   return false;
 }
 
-export function printMessage(service: ServiceDescriptorProto, fileName: string, exportMap: ExportMap, messageDescriptor: DescriptorProto, indentLevel: number, fileDescriptor: FileDescriptorProto) {
+export function printMessage(fileName: string, exportMap: ExportMap, messageDescriptor: DescriptorProto, indentLevel: number, fileDescriptor: FileDescriptorProto) {
   const messageName = messageDescriptor.getName();
   const messageOptions = messageDescriptor.getOptions();
   if (messageOptions !== undefined && messageOptions.getMapEntry()) {
@@ -43,8 +43,8 @@ export function printMessage(service: ServiceDescriptorProto, fileName: string, 
 
   const printer = new Printer(indentLevel);
 
-  printer.write(printDocumentation('interface', `${service.getName()}.${messageName}`, 1, `${messageName} interface that provides properties
-   * and typings from the given gRPC ${messageName} Message.`));
+  printer.write(printDocumentation('interface', messageName, 0, `${messageName} interface that provides properties
+ * and typings from the given gRPC ${messageName} Message.`));
 
   printer.printLn(`export interface ${messageName} {`);
 
@@ -146,14 +146,14 @@ export function printMessage(service: ServiceDescriptorProto, fileName: string, 
 */
   //printer.printEmptyLn();
   messageDescriptor.getNestedTypeList().forEach(nested => {
-    const msgOutput = printMessage(service, fileName, exportMap, nested, indentLevel, fileDescriptor);
+    const msgOutput = printMessage(fileName, exportMap, nested, indentLevel, fileDescriptor);
     if (msgOutput !== "") {
       // If the message class is a Map entry then it isn't output, so don't print the namespace block
       printer.write(msgOutput);
     }
   });
   messageDescriptor.getEnumTypeList().forEach(enumType => {
-    printer.write(`${printEnum(service, enumType, indentLevel)}`);
+    printer.write(`${printEnum(enumType, indentLevel)}`);
   });
   messageDescriptor.getOneofDeclList().forEach((oneOfDecl, index) => {
     printer.write(`${printOneOfDecl(oneOfDecl, oneOfGroups[index] || [], indentLevel)}`);
