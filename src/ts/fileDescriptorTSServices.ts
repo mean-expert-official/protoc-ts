@@ -58,7 +58,7 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
      * from the given gRPC ${service.getName()} service.`));
       const requestMessageTypeName = getFieldType(MESSAGE_TYPE, method.getInputType().slice(1), "", exportMap);
       const responseMessageTypeName = getFieldType(MESSAGE_TYPE, method.getOutputType().slice(1), "", exportMap);
-      methodPrinter.printIndentedLn(`async ${lowercaseFirst(method.getName())}(request: ${requestMessageTypeName}): Promise<${responseMessageTypeName}>;`);
+      methodPrinter.printIndentedLn(`${lowercaseFirst(method.getName())}(request: ${requestMessageTypeName}): Promise<${responseMessageTypeName}>;`);
     });
     printer.print(methodPrinter.output);
     printer.printIndentedLn(`}`);
