@@ -1,6 +1,6 @@
 {
   "name": "@xanthous/protoc-ts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Protoc compiler plugin for TypeScript service interfaces",
   "scripts": {
     "lint": "tslint src/**/*.ts && (cd test && npm run lint)",
@@ -23,9 +23,9 @@
     "proto3"
   ],
   "author": {
-    "name": "Jonathan Casarrubias",
-    "email": "jcasarrubias@mean.expert",
-    "url": "http://mean.expert"
+    "name": "Simon Liang",
+    "email": "no.lhr0909@gmail.com",
+    "url": "http://xanthous-tech.github.io"
   },
   "license": "MIT",
   "dependencies": {
