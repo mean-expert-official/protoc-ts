@@ -4,7 +4,7 @@
 ## Installation
 
 ````sh
-$ npm install --save @mean-expert/protoc-ts
+$ npm install --save @xanthous/protoc-ts
 ````
 
 ## Usage
