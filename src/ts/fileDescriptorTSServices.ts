@@ -1,4 +1,4 @@
-import { filePathToPseudoNamespace, getPathToRoot, lowercaseFirst } from "../util";
+import { filePathToPseudoNamespace, getPathToRoot, lowercaseFirst, getRequestType, getResponseType } from "../util";
 import { ExportMap } from "../ExportMap";
 import { Printer } from "../Printer";
 import { FileDescriptorProto } from "google-protobuf/google/protobuf/descriptor_pb";
@@ -21,6 +21,7 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
   const printer = new Printer(0);
   //printer.printLn(`// package: ${packageName}`);
   //printer.printLn(`// file: ${fileDescriptor.getName()}`);
+  printer.printLn(`import * as grpc from "grpc";`);
   //printer.printLn(`import * as jspb from "google-protobuf";`);
   //printer.printEmptyLn();
 
@@ -58,7 +59,12 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
      * from the given gRPC ${service.getName()} service.`));
       const requestMessageTypeName = getFieldType(MESSAGE_TYPE, method.getInputType().slice(1), "", exportMap);
       const responseMessageTypeName = getFieldType(MESSAGE_TYPE, method.getOutputType().slice(1), "", exportMap);
-      methodPrinter.printIndentedLn(`${lowercaseFirst(method.getName())}(request: ${requestMessageTypeName}): ${responseMessageTypeName};`);
+      // TODO: make sure the streaming types are set up
+      methodPrinter.printIndentedLn(`${
+        lowercaseFirst(method.getName())
+      }(${
+        getRequestType(method, requestMessageTypeName, responseMessageTypeName)
+      }): ${getResponseType(method, responseMessageTypeName)};`);
     });
     printer.print(methodPrinter.output);
     printer.printIndentedLn(`}`);

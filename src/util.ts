@@ -1,5 +1,42 @@
-import {FileDescriptorProto} from "google-protobuf/google/protobuf/descriptor_pb";
+import {FileDescriptorProto, MethodDescriptorProto} from "google-protobuf/google/protobuf/descriptor_pb";
 import {ExportEnumEntry, ExportMessageEntry} from "./ExportMap";
+
+export function getRequestType(
+  method: MethodDescriptorProto,
+  requestTypeName: string,
+  responseTypeName: string
+): string {
+  if (method.getClientStreaming()) {
+    if (method.getServerStreaming()) {
+      // bidi stream
+      return `stream: grpc.ServerDuplexStream<${requestTypeName}, ${responseTypeName}>`;
+    } else {
+      // client stream
+      return `stream: grpc.ServerReadableStream<${requestTypeName}>`;
+    }
+  } else {
+    if (method.getServerStreaming()) {
+      // server stream
+      return `stream: grpc.ServerWriteableStream<${requestTypeName}>`;
+    } else {
+      // unary call
+      return `request: ${requestTypeName}`;
+    }
+  }
+}
+
+export function getResponseType(
+  method: MethodDescriptorProto,
+  responseTypeName: string
+): string {
+  // for response type, only have to decide if it is server side streaming
+  if (method.getServerStreaming()) {
+    return "void";
+  } else {
+    return `Promise<${responseTypeName}>`;
+  }
+}
+
 export function filePathToPseudoNamespace(filePath: string): string {
   return filePath.replace(".proto", "").replace(/\//g, "_").replace(/\./g, "_").replace(/\-/g, "_") + "_pb";
 }
