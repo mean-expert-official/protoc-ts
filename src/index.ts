@@ -1,7 +1,7 @@
 /**
  * @author improbable <https://github.com/improbable-eng>
  * @license Apache 2.0
- * 
+ *
  * This is the ProtoC compiler plugin.
  *
  * It only accepts stdin/stdout output according to the protocol
@@ -24,7 +24,7 @@ withAllStdIn((inputBuff: Buffer) => {
     /**
      * Edited by Jonathan Casarrubias to avoid creating original
      * declaration files.
-     * 
+     *
      * Apache 2.0
      */
     // Generate separate `.ts` files for services if param is set
@@ -39,11 +39,11 @@ withAllStdIn((inputBuff: Buffer) => {
         /**
          * Edited by Jonathan Casarrubias to avoid creating original
          * declaration files.
-         * 
+         *
          * Apache 2.0
          */
         const fileDescriptorOutput = printFileDescriptorTSServices(fileNameToDescriptor[fileName], exportMap);
-        if (fileDescriptorOutput != "") {
+        if (fileDescriptorOutput !== "") {
           const thisServiceFile = new CodeGeneratorResponse.File();
           thisServiceFile.setName(fileName + ".ts");
           thisServiceFile.setContent(fileDescriptorOutput);
