@@ -17,7 +17,7 @@ export function getRequestType(
   } else {
     if (method.getServerStreaming()) {
       // server stream
-      return `stream: grpc.ServerWritableStream<${requestTypeName}>`;
+      return `stream: grpc.ServerWriteableStream<${requestTypeName}>`;
     } else {
       // unary call
       return `request: ${requestTypeName}`;

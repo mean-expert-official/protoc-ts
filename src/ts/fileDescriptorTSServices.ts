@@ -21,7 +21,7 @@ export function printFileDescriptorTSServices(fileDescriptor: FileDescriptorProt
   const printer = new Printer(0);
   //printer.printLn(`// package: ${packageName}`);
   //printer.printLn(`// file: ${fileDescriptor.getName()}`);
-  printer.printLn(`import * from "grpc";`);
+  printer.printLn(`import * as grpc from "grpc";`);
   //printer.printLn(`import * as jspb from "google-protobuf";`);
   //printer.printEmptyLn();
 
